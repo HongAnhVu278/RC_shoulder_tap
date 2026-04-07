@@ -39,11 +39,11 @@ By default (no flags), both Recurse Center and Zulip are searched, and AI keywor
 
 **Examples:**
 ```bash
-bun index.ts "machine learning"          # search both RC + Zulip
-bun index.ts --recurse "Jane Doe"        # RC directory only
+bun index.ts "bufo"          # search both RC + Zulip
+bun index.ts --recurse "Pub Trivia"        # RC directory only
 bun index.ts --zulip rust                # Zulip only
-bun index.ts --no-suggest "pair programming"  # skip AI suggestions
-bun index.ts --model mistral "haskell"   # use a specific Ollama model
+bun index.ts --no-suggest "distributed guitar amp"  # skip AI suggestions
+bun index.ts --model mistral "machine learning"   # use a specific Ollama model
 ```
 
 ## AI Keyword Suggestions
