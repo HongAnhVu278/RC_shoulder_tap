@@ -1,16 +1,27 @@
 import { searchTopics, type TopicResult } from "./zulip-api";
 
-export async function runZulipSearch(query: string): Promise<void> {
+/**
+ * Fetches Zulip topic results for a query. Returns [] on error (after printing
+ * the error to stderr), so callers can keep running other searches.
+ */
+export async function gatherZulipResults(query: string): Promise<TopicResult[]> {
   console.log(`Searching for "${query}" in Zulip (last 7 days)...`);
-
   try {
-    const results = await searchTopics(query);
-    printTopicResults(query, results);
+    return await searchTopics(query);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("Error:", message);
-    process.exit(1);
+    return [];
   }
+}
+
+/**
+ * Thin wrapper that gathers and prints in one call. Preserved for any caller
+ * that wants the old fetch+print behavior.
+ */
+export async function runZulipSearch(query: string): Promise<void> {
+  const results = await gatherZulipResults(query);
+  printTopicResults(query, results);
 }
 
 function formatRelativeTime(date: Date): string {
@@ -23,7 +34,7 @@ function formatRelativeTime(date: Date): string {
   return `${Math.floor(diffHours / 24)}d ago`;
 }
 
-function stripMarkdown(text: string): string {
+export function stripMarkdown(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, "$1")
     .replace(/\*(.*?)\*/g, "$1")
@@ -34,7 +45,7 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-function printTopicResults(query: string, results: TopicResult[]): void {
+export function printTopicResults(query: string, results: TopicResult[]): void {
   if (results.length === 0) {
     console.log(`No results found for "${query}" in the last 7 days.`);
     return;
